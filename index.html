@@ -113,7 +113,7 @@
     <div class="section">
       <p>このツールは、入力した文章を下記の内容で変換できる便利ツールです。</p>
       <ul>
-        <li>テキストを丁寧語に変換</li>
+        <li>テキストをビジネス敬語に変換</li>
         <li>長文の要点を3行に要約</li>
         <li>返す内容は決まってるけど文章がぱっとしない時のLINE返信例の作成</li>
         <li>テキストからメールの件名、本文の作成</li>
@@ -128,7 +128,7 @@
     </div>
     <textarea id="inputText" rows="6" placeholder="変換したい文章を入力してください"></textarea>
     <select id="mode">
-      <option value="polite">丁寧語に変換</option>
+      <option value="polite">ビジネス敬語に変換</option>
       <option value="summary">要点3行要約</option>
       <option value="line">LINE返信案</option>
       <option value="email">メール件名＋本文生成</option>
@@ -149,10 +149,11 @@
     <section class="comments" style="margin-top: 40px;">
   <h2>🗣 ユーザーの投稿（近日公開予定）</h2>
   <p>このコーナーでは、皆さんが体験した「面白変換」や、このサイトに関する意見を自由に投稿できるようにする予定です。</p>
+  <p>投稿例</p>
   <ul style="margin-top: 15px;">
-    <li>👀「すみません」が「申し訳ございません」に変換されてビビった</li>
-    <li>🎉 翻訳がまさかの洒落に！笑</li>
-    <li>📝 長文を要約したら逆にわかりやすくなったのが驚き</li>
+    <li> めちゃめちゃ便利！！神ツール！</li>
+    <li> 某動画投稿者が歌詞の逆翻訳で遊んでたから自分もやってみたけどまさかの歌詞で面白かった笑</li>
+    <li> 「おっしゃられる」だと思ってたのに「言われる」になるの意外だった</li>
   </ul>
   <p style="font-size: 13px; color: #999; margin-top: 10px;">※現在この機能は開発中です。公開までお待ちください！</p>
 </section>
@@ -193,7 +194,7 @@
                 return `次の文章の言語を判定し、以下のルールで翻訳してください：\n- 日本語なら自然な英語に翻訳\n- 英語なら自然な日本語に翻訳\n\n対象文：\n${inputText}`;
               }
               const promptMap = {
-                "polite": `以下の文章を敬語に丁寧に変換してください:\n${inputText}`,
+                "polite": `以下の文章をビジネス敬語に変換してください:\n${inputText}`,
                 "summary": `以下の文章の要点を3行でわかりやすく要約してください:\n${inputText}`,
                 "line": `以下の文章をカジュアルなLINEの返信文として自然に整形してください:\n${inputText}`,
                 "email": `以下の内容をもとに、ビジネス向けのメールの件名と本文を作成してください:\n${inputText}`
