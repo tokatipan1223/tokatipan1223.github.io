@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>GPT文章変換ツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 700px;
+      background: #fff;
+      padding: 20px;
+      margin: 0 auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      text-align: center;
+    }
+    .section {
+      margin-top: 25px;
+    }
+    textarea, select, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      font-size: 17px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #resultMessage {
+      white-space: pre-wrap;
+      background: #f9f9f9;
+      padding: 15px;
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    #translatedText {
+      display: none;
+    }
+    #copyBtn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #copyBtn:hover {
+      background: #218838;
+    }
+    .note {
+      color: #777;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #ccc;
+      margin-top: 40px;
+      padding-top: 20px;
+    }
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+    .profile-text {
+      font-size: 14px;
+      color: #444;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 20px; }
+      textarea, select, button, #copyBtn {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>GPT文章変換ツール</h1>
+    <div class="section">
+      <p>このツールは、入力した文章を下記の内容で変換できる便利ツールです。</p>
+      <ul>
+        <li>テキストを丁寧語に変換</li>
+        <li>長文の要点を3行に要約</li>
+        <li>返す内容は決まってるけど文章がぱっとしない時のLINE返信例の作成</li>
+        <li>テキストからメールの件名、本文の作成</li>
+        <li>日→英、英→日翻訳（言語は自動判定）</li>
+      </ul>
+      <p>使用手順</p>
+      <ol>
+        <li>変換したい文章を下の欄に入力</li>
+        <li>変換タイプを選択し、「変換する」ボタンをクリック</li>
+        <li>結果が表示されたら「コピー」も可能です</li>
+      </ol>
+    </div>
+    <textarea id="inputText" rows="6" placeholder="変換したい文章を入力してください"></textarea>
+    <select id="mode">
+      <option value="polite">丁寧語に変換</option>
+      <option value="summary">要点3行要約</option>
+      <option value="line">LINE返信案</option>
+      <option value="email">メール件名＋本文生成</option>
+      <option value="translate">翻訳（自動判定）</option>
+    </select>
+    <p id="translateNote" class="note" style="display: none;">※この翻訳機能は日本語と英語のみ対応しています</p>
+    <button onclick="convertText()">変換する</button>
+    <div id="resultMessage"></div>
+    <div id="translatedText"></div>
+    <button id="copyBtn" style="display:none;" onclick="copyResult()">結果をコピー</button>
+    <div class="profile">
+      <img src="https://i.imgur.com/jjjTEBl.jpeg" alt="とかちのプロフィールアイコン">
+      <div class="profile-text">
+        <strong>とかち</strong><br>
+        IT業界で働く新米エンジニアです。自分が「こんなのあったら便利だな」と思ったことを形にして、発信しています。誰かのお役に立てたらいいなということと世界平和を望んで日々勉強しています。
+      </div>
+    </div>
+  </div>
+  <footer style="text-align: center; margin-top: 40px;">
+    <button onclick="navigateTo('privacy')" style="margin:10px; background:none; border:none; color:#007bff; text-decoration:underline; font-size:14px; cursor:pointer;">プライバシーポリシー</button>
+    <button onclick="navigateTo('terms')" style="margin:10px; background:none; border:none; color:#007bff; text-decoration:underline; font-size:14px; cursor:pointer;">利用規約</button>
+  </footer>
+  <script>
+    function navigateTo(page) {
+      const base = "https://tokatipan1223.github.io/gpt-converter";
+      window.open(base + "/" + page + ".html", "_blank");
+    }
+
+    async function convertText() {
+      const inputText = document.getElementById("inputText").value;
+      const mode = document.getElementById("mode").value;
+      const resultDiv = document.getElementById("resultMessage");
+      const translatedDiv = document.getElementById("translatedText");
+      const copyBtn = document.getElementById("copyBtn");
+      const translateNote = document.getElementById("translateNote");
+
+      translateNote.style.display = (mode === "translate") ? "block" : "none";
+      resultDiv.textContent = "変換中...";
+      translatedDiv.textContent = "";
+      copyBtn.style.display = "none";
+
+      try {
+        const response = await fetch("https://gpt-proxy.katouichirou537.workers.dev/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            prompt: (() => {
+              if (mode === "translate") {
+                return `次の文章の言語を判定し、以下のルールで翻訳してください：\n- 日本語なら自然な英語に翻訳\n- 英語なら自然な日本語に翻訳\n\n対象文：\n${inputText}`;
+              }
+              const promptMap = {
+                "polite": `以下の文章を敬語に丁寧に変換してください:\n${inputText}`,
+                "summary": `以下の文章の要点を3行でわかりやすく要約してください:\n${inputText}`,
+                "line": `以下の文章をカジュアルなLINEの返信文として自然に整形してください:\n${inputText}`,
+                "email": `以下の内容をもとに、ビジネス向けのメールの件名と本文を作成してください:\n${inputText}`
+              };
+              return promptMap[mode] || promptMap["summary"];
+            })()
+          })
+        });
+
+        const data = await response.json();
+        const res = data.result;
+
+        if (mode === "translate" && res.includes("翻訳：")) {
+          const parts = res.split("翻訳：");
+          resultDiv.textContent = parts[0].trim();
+          translatedDiv.textContent = parts[1].trim();
+        } else {
+          resultDiv.textContent = res;
+          translatedDiv.textContent = res;
+        }
+        copyBtn.style.display = "block";
+      } catch (error) {
+        resultDiv.textContent = "エラー：" + error.message;
+        translatedDiv.textContent = "";
+        copyBtn.style.display = "none";
+      }
+    }
+
+    function copyResult() {
+      const text = document.getElementById("translatedText").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("翻訳結果をコピーしました！");
+      }).catch(err => {
+        alert("コピーに失敗しました");
+      });
+    }
+  </script>
+</body>
+</html>
